@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jump", "Jump\Jump\Jump.csproj", "{51435067-261F-454E-9F79-FC3B4078A6EB}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "JumpContent", "Jump\JumpContent\JumpContent.contentproj", "{94EFCA6B-0476-4EDE-B74C-D2F76968573A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{51435067-261F-454E-9F79-FC3B4078A6EB}.Debug|x86.ActiveCfg = Debug|x86
+		{51435067-261F-454E-9F79-FC3B4078A6EB}.Debug|x86.Build.0 = Debug|x86
+		{51435067-261F-454E-9F79-FC3B4078A6EB}.Release|x86.ActiveCfg = Release|x86
+		{51435067-261F-454E-9F79-FC3B4078A6EB}.Release|x86.Build.0 = Release|x86
+		{94EFCA6B-0476-4EDE-B74C-D2F76968573A}.Debug|x86.ActiveCfg = Debug|x86
+		{94EFCA6B-0476-4EDE-B74C-D2F76968573A}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
