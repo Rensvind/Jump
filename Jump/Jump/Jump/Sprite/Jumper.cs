@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -19,6 +20,8 @@ namespace Jump.Sprite
 
         private readonly int windowHeight;
         private readonly int windowWidth;
+
+        private SoundEffect soundEffect;
 
         public Jumper(GraphicsDeviceManager graphicsDeviceManager) : base("MrJump")
         {
@@ -147,6 +150,7 @@ namespace Jump.Sprite
 
             if (mCurrentState != State.Jumping)
             {
+                soundEffect.Play(0.3f, 0.0f, 0.0f);
                 mCurrentState = State.Jumping;
                 mStartingPosition = Position;
                 mDirection.Y = MoveUp;
@@ -161,6 +165,8 @@ namespace Jump.Sprite
             base.LoadContent(theContentManager);
 
             Source = new Rectangle(0, 0, 20, mSpriteTexture.Height);
+
+            soundEffect = theContentManager.Load<SoundEffect>("Untitled");
         }
     }
 }
