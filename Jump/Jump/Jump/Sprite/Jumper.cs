@@ -21,6 +21,17 @@ namespace Jump.Sprite
         private readonly int windowHeight;
         private readonly int windowWidth;
 
+        private const int WalkingLeftFrameY = 0;
+        private const int WalkingRightFrameY = 40;
+
+        private const int FrameWidth = 20;
+
+        private const int NrOfFrames = 3;
+        private int currentFrame = 0;
+
+        private float timeElapsed;
+        private float timeToUpdate = 0.1f;
+
         private SoundEffect soundEffect;
 
         public Jumper(GraphicsDeviceManager graphicsDeviceManager) : base("MrJump")
@@ -38,62 +49,148 @@ namespace Jump.Sprite
             Falling
         }
 
-        State mCurrentState = State.Walking;
+        State mCurrentState = State.Falling;
 
         Vector2 mDirection = Vector2.Zero;
         Vector2 mSpeed = Vector2.Zero;
 
         Vector2 mStartingPosition = Vector2.Zero;
+        private Brick currentBrick;
+        private const int FrameHeight = 40;
 
         public void Update(GameTime theGameTime, List<Brick> bricks)
         {
             KeyboardState aCurrentKeyboardState = Keyboard.GetState();
 
-            UpdateMovement(aCurrentKeyboardState, bricks);
+            UpdateMovement(theGameTime, aCurrentKeyboardState);
             UpdateJump(aCurrentKeyboardState, bricks);
+            UpdateFalling(aCurrentKeyboardState, bricks);
 
             mPreviousKeyboardState = aCurrentKeyboardState;
 
             base.Update(theGameTime, mSpeed, mDirection);
         }
 
-        private void UpdateMovement(KeyboardState aCurrentKeyboardState, List<Brick> bricks)
+        private void UpdateFalling(KeyboardState aCurrentKeyboardState, List<Brick> bricks)
         {
-            if (mCurrentState == State.Walking)
+            if (mCurrentState != State.Falling) return;
+            
+            
+            mDirection.Y = MoveDown;
+            mSpeed.Y = JumperSpeed;
+
+            if (aCurrentKeyboardState.IsKeyDown(Keys.Left))
             {
-                mSpeed = Vector2.Zero;
-                mDirection = Vector2.Zero;
-
-                var brick = bricks.FirstOrDefault(
-                    x =>
-                    x.Position.X -10 <= Position.X && x.Position.X + x.Source.Width - 10 >= Position.X &&
-                    x.Position.Y - 2 <= (int) (Position.Y + Source.Height) &&
-                    (int) (Position.Y + Source.Height) <= (x.Position.Y + x.Source.Height));
-
-
-                if(brick == null)
+                if (Position.X > 0)
                 {
-                    mSpeed.Y = JumperSpeed * 2;
-                    mDirection.Y = MoveDown;
-                }else
-                {
-                    Position.Y = brick.Position.Y - Source.Height;
+                    mSpeed.X = (float)JumperSpeed / 1.5f;
+                    mDirection.X = MoveLeft;
                 }
 
-                if (aCurrentKeyboardState.IsKeyDown(Keys.Left) && Position.X > 0)
+            }
+            else if (aCurrentKeyboardState.IsKeyDown(Keys.Right))
+            {
+                if (Position.X + Size.Width < windowWidth)
+                {
+                    mSpeed.X = (float)JumperSpeed / 1.5f;
+                    mDirection.X = MoveRight;
+                }
+            }
+
+            if (Position.X <= 0)
+            {
+                mDirection.X = MoveRight;
+            }
+            else if (Position.X + Size.Width > windowWidth)
+            {
+                mDirection.X = MoveLeft;
+            }
+
+            if (Position.Y >= windowHeight)
+                Position.Y = 0;
+
+            var brick = bricks.FirstOrDefault(
+                x =>
+                x.Position.X - 10 <= Position.X && x.Position.X + x.Source.Width - 10 >= Position.X &&
+                x.Position.Y - 2 <= (int)(Position.Y + Source.Height) &&
+                (int)(Position.Y + Source.Height) <= (x.Position.Y + x.Source.Height));
+
+
+            if (brick == null)
+            {
+                mSpeed.Y = JumperSpeed * 2;
+                mDirection.Y = MoveDown;
+            }
+            else
+            {
+                //System.Diagnostics.Debug.WriteLine("WALKING");
+                currentBrick = brick;
+                mCurrentState = State.Walking;
+                Source = new Rectangle(mDirection.X == 1 ? 40 : 0, WalkingRightFrameY, FrameWidth, FrameHeight);
+                Position.Y = brick.Position.Y - Source.Height;
+            }
+        }
+
+        private void UpdateMovement(GameTime theGameTime, KeyboardState aCurrentKeyboardState)
+        {
+            if (mCurrentState != State.Walking) return;
+
+
+            mSpeed = Vector2.Zero;
+            mDirection = Vector2.Zero;
+
+            Position.Y = currentBrick.Position.Y - Source.Height;
+
+            if (aCurrentKeyboardState.IsKeyDown(Keys.Left))
+            {
+                timeElapsed += (float)theGameTime.ElapsedGameTime.TotalSeconds;
+
+                if (timeElapsed > timeToUpdate)
+                {
+                    timeElapsed -= timeToUpdate;
+
+                    Source = new Rectangle(currentFrame * 20, WalkingLeftFrameY, 20, FrameHeight);
+
+                    if (++currentFrame == NrOfFrames)
+                        currentFrame = 0;
+                }
+
+                if (Position.X > 0)
                 {
                     mSpeed.X = JumperSpeed;
                     mDirection.X = MoveLeft;
                 }
+            }
 
-                else if (aCurrentKeyboardState.IsKeyDown(Keys.Right) && Position.X + Size.Width < windowWidth)
+            else if (aCurrentKeyboardState.IsKeyDown(Keys.Right))
+            {
+                timeElapsed += (float)theGameTime.ElapsedGameTime.TotalSeconds;
+
+                if (timeElapsed > timeToUpdate)
+                {
+                    timeElapsed -= timeToUpdate;
+
+                    Source = new Rectangle(currentFrame * 20, WalkingRightFrameY, 20, FrameHeight);
+
+                    if (++currentFrame == NrOfFrames)
+                        currentFrame = 0;
+                }
+
+                if (Position.X + Size.Width < windowWidth)
                 {
                     mSpeed.X = JumperSpeed;
                     mDirection.X = MoveRight;
                 }
+            }
 
-                if (Position.Y >= windowHeight)
-                    Position.Y = 0;
+            if(Position.X < currentBrick.Position.X - 10 || Position.X >= currentBrick.Position.X + currentBrick.Source.Width + 10)
+            {
+                //System.Diagnostics.Debug.WriteLine("FALLING");
+                mCurrentState = State.Falling;
+                Source = new Rectangle(0, FrameHeight * 2, FrameWidth, FrameHeight );
+                mSpeed.Y = JumperSpeed*2;
+                mDirection.Y = MoveDown;
+                currentBrick = null;
             }
         }
 
@@ -101,7 +198,7 @@ namespace Jump.Sprite
         {
             if (mCurrentState == State.Walking)
             {
-                if (aCurrentKeyboardState.IsKeyDown(Keys.Space)&& mPreviousKeyboardState.IsKeyDown(Keys.Space) == false)
+                if (aCurrentKeyboardState.IsKeyDown(Keys.Space) && mPreviousKeyboardState.IsKeyDown(Keys.Space) == false)
                 {
                     Jump();
                 }
@@ -111,7 +208,10 @@ namespace Jump.Sprite
             {
                 if (mStartingPosition.Y - Position.Y > JumpHeight)
                 {
+                    //System.Diagnostics.Debug.WriteLine("FALLING2");
                     mDirection.Y = MoveDown;
+                    mCurrentState = State.Falling;
+                    Source = new Rectangle(0, FrameHeight * 2, FrameWidth, FrameHeight);
                 }
 
                 if(Position.X <= 0 || Position.X + Source.Width > windowWidth)
@@ -130,6 +230,7 @@ namespace Jump.Sprite
 
                     if (brick != null)
                     {
+                        //System.Diagnostics.Debug.WriteLine("WALKING2");
                         Position.Y = brick.Position.Y - Source.Height;
                         mCurrentState = State.Walking;
                         mDirection = Vector2.Zero;
@@ -147,24 +248,34 @@ namespace Jump.Sprite
 
         private void Jump()
         {
-
             if (mCurrentState != State.Jumping)
             {
+                //System.Diagnostics.Debug.WriteLine("JUMPING");
                 soundEffect.Play(0.3f, 0.0f, 0.0f);
                 mCurrentState = State.Jumping;
                 mStartingPosition = Position;
                 mDirection.Y = MoveUp;
                 mSpeed = new Vector2(320, 320);
-                Source = new Rectangle(20, 0, 20, Source.Height);
+
+                //System.Diagnostics.Debug.WriteLine("X: " + mDirection.X + ", previousRight: " + mPreviousKeyboardState.GetPressedKeys().Aggregate(string.Empty, (current, pressedKey) => current + pressedKey));
+                if (mDirection.X <= 0)
+                {
+                    //System.Diagnostics.Debug.WriteLine("RIGHT");
+                    Source = new Rectangle(20, 80, 20, Source.Height);
+                }
+                else
+                {
+                    //System.Diagnostics.Debug.WriteLine("LEFT");
+                    Source = new Rectangle(40, 80, 20, Source.Height);
+                }
             }
         }
 
-        
         public override void LoadContent(ContentManager theContentManager)
         {
             base.LoadContent(theContentManager);
 
-            Source = new Rectangle(0, 0, 20, mSpriteTexture.Height);
+            Source = new Rectangle(0, 80, 20, 40);
 
             soundEffect = theContentManager.Load<SoundEffect>("Untitled");
         }
