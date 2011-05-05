@@ -49,6 +49,8 @@ namespace Jump.Sprite
             Falling
         }
 
+        private bool parachute;
+
         State mCurrentState = State.Falling;
 
         Vector2 mDirection = Vector2.Zero;
@@ -96,6 +98,12 @@ namespace Jump.Sprite
                     mDirection.X = MoveRight;
                 }
             }
+            
+            if(aCurrentKeyboardState.IsKeyDown(Keys.F) && !parachute)
+            {
+                parachute = true;
+                Source = new Rectangle(FrameWidth * 3, FrameHeight * 2, FrameWidth, FrameHeight);
+            }
 
             if (Position.X <= 0)
             {
@@ -118,12 +126,13 @@ namespace Jump.Sprite
 
             if (brick == null)
             {
-                mSpeed.Y = JumperSpeed * 2;
+                mSpeed.Y = !parachute ? JumperSpeed * 2 : JumperSpeed;
                 mDirection.Y = MoveDown;
             }
             else
             {
                 //System.Diagnostics.Debug.WriteLine("WALKING");
+                parachute = false;
                 currentBrick = brick;
                 mCurrentState = State.Walking;
                 Source = new Rectangle(mDirection.X == 1 ? 40 : 0, WalkingRightFrameY, FrameWidth, FrameHeight);
@@ -187,14 +196,15 @@ namespace Jump.Sprite
                 Source = new Rectangle(0, 80, 20, FrameHeight);
             }
 
-            if(Position.X < currentBrick.Position.X - 10 || Position.X >= currentBrick.Position.X + currentBrick.Source.Width + 10)
+            if(Position.X < currentBrick.Position.X - 10 || Position.X >= currentBrick.Position.X + currentBrick.Source.Width)
             {
                 //System.Diagnostics.Debug.WriteLine("FALLING");
                 mCurrentState = State.Falling;
-                Source = new Rectangle(0, FrameHeight * 2, FrameWidth, FrameHeight );
+                Source = new Rectangle(0, FrameHeight * 2, FrameWidth, FrameHeight);
                 mSpeed.Y = JumperSpeed*2;
                 mDirection.Y = MoveDown;
                 currentBrick = null;
+                parachute = false;
             }
         }
 
