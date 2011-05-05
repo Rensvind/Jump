@@ -21,8 +21,9 @@ namespace Jump
         SpriteBatch spriteBatch;
 
         private List<Brick> bricks;
-
         private Jumper jumper;
+
+        
 
         public Game1()
         {
@@ -69,9 +70,9 @@ namespace Jump
 
             jumper.LoadContent(this.Content);
 
-            var theme = Content.Load<Song>("jump");
-            MediaPlayer.IsRepeating = true;
-            MediaPlayer.Play(theme);
+            //var theme = Content.Load<Song>("jump");
+            //MediaPlayer.IsRepeating = true;
+            //MediaPlayer.Play(theme);
         }
 
         /// <summary>
@@ -99,6 +100,7 @@ namespace Jump
             {
                 brick.Update(gameTime);
             }
+
             jumper.Update(gameTime, bricks);
 
             base.Update(gameTime);
@@ -119,7 +121,7 @@ namespace Jump
             {
                 brick.Draw(spriteBatch);    
             }
-
+            
             jumper.Draw(spriteBatch);
 
             spriteBatch.End();

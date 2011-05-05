@@ -18,7 +18,7 @@ namespace Jump.Sprite
         //The amount to increase/decrease the size of the original sprite. 
         private float mScale = 1.0f;
 
-        private readonly string theAssetName;
+        protected readonly string theAssetName;
 
         protected Sprite(string theAssetName)
         {
@@ -58,7 +58,7 @@ namespace Jump.Sprite
         }
 
         //Draw the sprite to the screen
-        public void Draw(SpriteBatch theSpriteBatch)
+        public virtual void Draw(SpriteBatch theSpriteBatch)
         {
             theSpriteBatch.Draw(mSpriteTexture, Position, Source,
                 Color.White, 0.0f, Vector2.Zero, Scale, SpriteEffects.None, 0);
