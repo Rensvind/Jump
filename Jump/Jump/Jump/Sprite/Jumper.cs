@@ -30,7 +30,7 @@ namespace Jump.Sprite
         private int currentFrame = 0;
 
         private float timeElapsed;
-        private float timeToUpdate = 0.1f;
+        private const float TimeToUpdate = 0.1f;
 
         private SoundEffect soundEffect;
 
@@ -145,9 +145,9 @@ namespace Jump.Sprite
             {
                 timeElapsed += (float)theGameTime.ElapsedGameTime.TotalSeconds;
 
-                if (timeElapsed > timeToUpdate)
+                if (timeElapsed > TimeToUpdate)
                 {
-                    timeElapsed -= timeToUpdate;
+                    timeElapsed -= TimeToUpdate;
 
                     Source = new Rectangle(currentFrame * 20, WalkingLeftFrameY, 20, FrameHeight);
 
@@ -166,9 +166,9 @@ namespace Jump.Sprite
             {
                 timeElapsed += (float)theGameTime.ElapsedGameTime.TotalSeconds;
 
-                if (timeElapsed > timeToUpdate)
+                if (timeElapsed > TimeToUpdate)
                 {
-                    timeElapsed -= timeToUpdate;
+                    timeElapsed -= TimeToUpdate;
 
                     Source = new Rectangle(currentFrame * 20, WalkingRightFrameY, 20, FrameHeight);
 
@@ -181,6 +181,10 @@ namespace Jump.Sprite
                     mSpeed.X = JumperSpeed;
                     mDirection.X = MoveRight;
                 }
+            }
+            else
+            {
+                Source = new Rectangle(0, 80, 20, FrameHeight);
             }
 
             if(Position.X < currentBrick.Position.X - 10 || Position.X >= currentBrick.Position.X + currentBrick.Source.Width + 10)
@@ -198,7 +202,7 @@ namespace Jump.Sprite
         {
             if (mCurrentState == State.Walking)
             {
-                if (aCurrentKeyboardState.IsKeyDown(Keys.Space) && mPreviousKeyboardState.IsKeyDown(Keys.Space) == false)
+                if ((aCurrentKeyboardState.IsKeyDown(Keys.Space) || aCurrentKeyboardState.IsKeyDown(Keys.Up)) && (!mPreviousKeyboardState.IsKeyDown(Keys.Space) && !mPreviousKeyboardState.IsKeyDown(Keys.Up)))
                 {
                     Jump();
                 }
@@ -258,16 +262,7 @@ namespace Jump.Sprite
                 mSpeed = new Vector2(320, 320);
 
                 //System.Diagnostics.Debug.WriteLine("X: " + mDirection.X + ", previousRight: " + mPreviousKeyboardState.GetPressedKeys().Aggregate(string.Empty, (current, pressedKey) => current + pressedKey));
-                if (mDirection.X <= 0)
-                {
-                    //System.Diagnostics.Debug.WriteLine("RIGHT");
-                    Source = new Rectangle(20, 80, 20, Source.Height);
-                }
-                else
-                {
-                    //System.Diagnostics.Debug.WriteLine("LEFT");
-                    Source = new Rectangle(40, 80, 20, Source.Height);
-                }
+                Source = mDirection.X <= 0 ? new Rectangle(20, 80, 20, Source.Height) : new Rectangle(40, 80, 20, Source.Height);
             }
         }
 
