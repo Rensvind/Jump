@@ -70,9 +70,9 @@ namespace Jump
 
             jumper.LoadContent(this.Content);
 
-            var theme = Content.Load<Song>("jump");
-            MediaPlayer.IsRepeating = true;
-            MediaPlayer.Play(theme);
+            //var theme = Content.Load<Song>("jump");
+            //MediaPlayer.IsRepeating = true;
+            //MediaPlayer.Play(theme);
         }
 
         /// <summary>

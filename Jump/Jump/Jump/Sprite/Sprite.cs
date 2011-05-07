@@ -10,7 +10,7 @@ namespace Jump.Sprite
         public Vector2 Position;
 
         //The texture object used when drawing the sprite
-        protected Texture2D mSpriteTexture;
+        protected Texture2D MSpriteTexture;
 
         //The Size of the Sprite (with scale applied)
         public Rectangle Size;
@@ -18,19 +18,36 @@ namespace Jump.Sprite
         //The amount to increase/decrease the size of the original sprite. 
         private float mScale = 1.0f;
 
-        protected readonly string theAssetName;
+        protected readonly string AssetName;
 
-        protected Sprite(string theAssetName)
+        protected readonly int Height;
+        protected readonly int Width;
+
+        public Rectangle BoundingBox
         {
-            this.theAssetName = theAssetName;
+            get
+            {
+                return new Rectangle(
+                    (int)Position.X,
+                    (int)Position.Y,
+                    Width,
+                    Height);
+            }
+        }
+
+        protected Sprite(string assetName, int height, int width)
+        {
+            AssetName = assetName;
+            Height = height;
+            Width = width;
         }
 
         //Load the texture for the sprite using the Content Pipeline
         public virtual void LoadContent(ContentManager theContentManager)
         {
-            mSpriteTexture = theContentManager.Load<Texture2D>(theAssetName);
-            Source = new Rectangle(0, 0, mSpriteTexture.Width, mSpriteTexture.Height);
-            Size = new Rectangle(0, 0, (int)(mSpriteTexture.Width * Scale), (int)(mSpriteTexture.Height * Scale));
+            MSpriteTexture = theContentManager.Load<Texture2D>(AssetName);
+            Source = new Rectangle(0, 0, Width, Height);
+            Size = new Rectangle(0, 0, (int)(Width * Scale), (int)(Height * Scale));
         }
 
         Rectangle mSource;
@@ -60,7 +77,7 @@ namespace Jump.Sprite
         //Draw the sprite to the screen
         public virtual void Draw(SpriteBatch theSpriteBatch)
         {
-            theSpriteBatch.Draw(mSpriteTexture, Position, Source,
+            theSpriteBatch.Draw(MSpriteTexture, Position, Source,
                 Color.White, 0.0f, Vector2.Zero, Scale, SpriteEffects.None, 0);
         }
 

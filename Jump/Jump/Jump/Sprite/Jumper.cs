@@ -34,9 +34,9 @@ namespace Jump.Sprite
 
         private SoundEffect soundEffect;
 
-        public Jumper(GraphicsDeviceManager graphicsDeviceManager) : base("MrJump")
+        public Jumper(GraphicsDeviceManager graphicsDeviceManager) : base("MrJump", 40, 20)
         {
-            windowWidth = graphicsDeviceManager.PreferredBackBufferWidth;
+            windowWidth =  graphicsDeviceManager.PreferredBackBufferWidth;
             windowHeight = graphicsDeviceManager.PreferredBackBufferHeight;
         }
 
@@ -76,7 +76,6 @@ namespace Jump.Sprite
         private void UpdateFalling(KeyboardState aCurrentKeyboardState, List<Brick> bricks)
         {
             if (mCurrentState != State.Falling) return;
-            
             
             mDirection.Y = MoveDown;
             mSpeed.Y = JumperSpeed;
@@ -194,6 +193,11 @@ namespace Jump.Sprite
             else
             {
                 Source = new Rectangle(0, 80, 20, FrameHeight);
+            }
+
+
+            if (currentBrick.PowerUp(new Rectangle((int)Position.X, (int)Position.Y, FrameWidth, FrameHeight)))
+            {
             }
 
             if(Position.X < currentBrick.Position.X - 10 || Position.X >= currentBrick.Position.X + currentBrick.Source.Width)
