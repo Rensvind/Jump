@@ -47,7 +47,7 @@ namespace Jump.Sprite
                 Source = new Rectangle(0, 0, Rand.Next(10, 250), (int)(MSpriteTexture.Height * Scale));
                 Position = new Vector2(Rand.Next(0, 600 - Source.Width), 0);
 
-                showPowerUp = Rand.Next(10) > 8;
+                showPowerUp = Rand.Next(10) > 8 && Source.Width > 20;
 
                 if(showPowerUp)
                     powerUp.Position.X = Rand.Next((int)Position.X, (int)Position.X + Source.Width - 20);

@@ -68,7 +68,9 @@ namespace Jump
                 brick.LoadContent(this.Content);
             }
 
-            jumper.LoadContent(this.Content);
+            var b = bricks[7];
+
+            jumper.LoadContent(this.Content, (int)(b.Position.X) + b.Source.Width/2, (int)b.Position.Y - b.Source.Height - 40);
 
             //var theme = Content.Load<Song>("jump");
             //MediaPlayer.IsRepeating = true;
@@ -121,6 +123,8 @@ namespace Jump
             {
                 brick.Draw(spriteBatch);    
             }
+
+            var b = bricks.Last();
             
             jumper.Draw(spriteBatch);
 

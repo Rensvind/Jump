@@ -280,6 +280,13 @@ namespace Jump.Sprite
             }
         }
 
+        public void LoadContent(ContentManager theContentManager, int x, int y)
+        {
+            LoadContent(theContentManager);
+
+            Position = new Vector2(x,y);
+        }
+
         public override void LoadContent(ContentManager theContentManager)
         {
             base.LoadContent(theContentManager);

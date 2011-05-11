@@ -74,6 +74,8 @@ namespace Jump.Sprite
             }
         }
 
+        
+
         //Draw the sprite to the screen
         public virtual void Draw(SpriteBatch theSpriteBatch)
         {
